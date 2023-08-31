@@ -9,16 +9,13 @@ booking_data = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'
 # Create a Streamlit app
 st.title('Band Studio Booking')
 
-# Import the streamlit_calendar package
-import streamlit_calendar
-
-# Create an interactive calendar widget
-booking_date = streamlit_calendar.st_calendar()
+# Import the streamlit-datetimeinput package
+import streamlit_datetimeinput as st_datetime
 
 # Create a form for booking
 with st.form('Booking Form'):
     band_name = st.text_input('Band Name')
-    booking_time = st.time_input('Booking Time')
+    booking_datetime = st_datetime.st_datetime_input('Booking Date and Time')
     submit_button = st.form_submit_button('Book Now')
 
     # Update the DataFrame with the booking information when the form is submitted
