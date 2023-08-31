@@ -14,7 +14,7 @@ st.title('Band Studio Booking')
 with st.form('Booking Form'):
     band_name = st.text_input('Band Name')
     booking_date = st.date_input('Booking Date')
-    booking_time = st.time_input('Booking Time')
+    booking_time = st.selectbox('Booking Time', ['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])
     submit_button = st.form_submit_button('Book Now')
 
     # Update the DataFrame with the booking information when the form is submitted
