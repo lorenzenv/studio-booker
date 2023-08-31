@@ -22,35 +22,15 @@ with st.form('Booking Form'):
         new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
         booking_data = booking_data.append(new_booking, ignore_index=True)
 
-# Define calendar options and events
-calendar_options = {
-    "headerToolbar": {
-        "left": "today prev,next",
-        "center": "title",
-        "right": "resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth",
-    },
-    "slotMinTime": "06:00:00",
-    "slotMaxTime": "18:00:00",
-    "initialView": "resourceTimelineDay",
-    "resourceGroupField": "building",
-    "resources": [
-        {"id": "a", "building": "Building A", "title": "Building A"},
-        {"id": "b", "building": "Building A", "title": "Building B"},
-        {"id": "c", "building": "Building B", "title": "Building C"},
-        {"id": "d", "building": "Building B", "title": "Building D"},
-        {"id": "e", "building": "Building C", "title": "Building E"},
-        {"id": "f", "building": "Building C", "title": "Building F"},
-    ],
-}
-calendar_events = [
-    {"title": "Event 1", "start": "2023-07-31T08:30:00", "end": "2023-07-31T10:30:00", "resourceId": "a",},
-    {"title": "Event 2", "start": "2023-07-31T07:30:00", "end": "2023-07-31T10:30:00", "resourceId": "b",},
-    {"title": "Event 3", "start": "2023-07-31T10:40:00", "end": "2023-07-31T12:30:00", "resourceId": "a",},
-]
+# Create a DataFrame for the next 14 days
+dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
+booking_status = pd.DataFrame(index=dates, columns=['Tagsüber', 'Abends']).fillna(False)
 
-# Create and display the calendar
-calendar = calendar(events=calendar_events, options=calendar_options)
-st.write(calendar)
+# Update the DataFrame with the booking information when the form is submitted
+if submit_button:
+    new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
+    booking_data = booking_data.append(new_booking, ignore_index=True)
+    booking_status.loc[booking_date, booking_time] = True
 
-# Display the booking information
-AgGrid(booking_data)
+# Display the booking status
+AgGrid(booking_status)
