@@ -58,18 +58,20 @@ except FileNotFoundError:
 st.session_state['booking_data']
 
 # Create a form for booking
-with st.form('Booking Form'):
-    band_name = st.text_input('Band Name')
-    min_date = pd.Timestamp.today()
-    max_date = min_date + pd.DateOffset(days=14)
-    booking_date = st.date_input('Booking Date', min_value=min_date, max_value=max_date, format="MM.DD.YYYY")
-    booking_time = st.selectbox('Booking Time', ['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])
-    submit_button = st.form_submit_button('Book Now')
+column1, column2 = st.columns(2)
+with column1:
+    with st.form('Booking Form'):
+        band_name = st.text_input('Band Name')
+        min_date = pd.Timestamp.today()
+        max_date = min_date + pd.DateOffset(days=14)
+        booking_date = st.date_input('Booking Date', min_value=min_date, max_value=max_date, format="MM.DD.YYYY")
+        booking_time = st.selectbox('Booking Time', ['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])
+        submit_button = st.form_submit_button('Book Now')
 
-    # Update the DataFrame with the booking information when the form is submitted
-    if submit_button:
-        new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
-        st.session_state['booking_data'] = st.session_state['booking_data'].append(new_booking, ignore_index=True)
+        # Update the DataFrame with the booking information when the form is submitted
+        if submit_button:
+            new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
+            st.session_state['booking_data'] = st.session_state['booking_data'].append(new_booking, ignore_index=True)
 
 # Create a DataFrame for the next 14 days
 dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
@@ -84,32 +86,32 @@ for index, row in st.session_state['booking_data'].iterrows():
     booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
 
 
-# Create a form for removing bookings
-with st.form('Remove Booking Form'):
-    # Create a list of bookings in the format "Band Name - Booking Date - Booking Time"
-    bookings = st.session_state['booking_data'].apply(lambda row: f"{row['Band Name']} - {row['Booking Date'].strftime('%d.%m.%Y')} - {row['Booking Time']}", axis=1).values.tolist()
-    # Create a selectbox that lists all the bookings
-    selected_booking = st.selectbox('Select a booking to remove', bookings)
-    # Create a 'Remove Booking' button to submit the form
-    remove_button = st.form_submit_button('Remove Booking')
+with column2:
+    with st.form('Remove Booking Form'):
+        # Create a list of bookings in the format "Band Name - Booking Date - Booking Time"
+        bookings = st.session_state['booking_data'].apply(lambda row: f"{row['Band Name']} - {row['Booking Date'].strftime('%d.%m.%Y')} - {row['Booking Time']}", axis=1).values.tolist()
+        # Create a selectbox that lists all the bookings
+        selected_booking = st.selectbox('Select a booking to remove', bookings)
+        # Create a 'Remove Booking' button to submit the form
+        remove_button = st.form_submit_button('Remove Booking')
 
-    # Update the booking data, booking times file, and S3 bucket when the 'Remove Booking' button is clicked
-    if remove_button:
-        # Split the selected booking into band name, booking date, and booking time
-        if selected_booking is not None:
-            band_name, booking_date_str, booking_time = selected_booking.split(' - ')
-        else:
-            st.warning('No booking selected.')
-            return
-        booking_date = pd.to_datetime(booking_date_str, format='%d.%m.%Y')
-        # Find the booking in the booking_data DataFrame that matches the selected booking
-        booking_to_remove = st.session_state['booking_data'][(st.session_state['booking_data']['Band Name'] == band_name) & (st.session_state['booking_data']['Booking Date'] == booking_date) & (st.session_state['booking_data']['Booking Time'] == booking_time)]
-        # Remove the booking from the booking data DataFrame
-        st.session_state['booking_data'] = st.session_state['booking_data'].drop(booking_to_remove.index)
-        # Update the booking times file and the S3 bucket
-        update_booking_times(st.session_state['booking_data'])
-        # Update the booking status DataFrame
-        booking_status = get_booking_status(st.session_state['booking_data'])
+        # Update the booking data, booking times file, and S3 bucket when the 'Remove Booking' button is clicked
+        if remove_button:
+            # Split the selected booking into band name, booking date, and booking time
+            if selected_booking is not None:
+                band_name, booking_date_str, booking_time = selected_booking.split(' - ')
+                booking_date = pd.to_datetime(booking_date_str, format='%d.%m.%Y')
+                # Find the booking in the booking_data DataFrame that matches the selected booking
+                booking_to_remove = st.session_state['booking_data'][(st.session_state['booking_data']['Band Name'] == band_name) & (st.session_state['booking_data']['Booking Date'] == booking_date) & (st.session_state['booking_data']['Booking Time'] == booking_time)]
+                # Remove the booking from the booking data DataFrame
+                st.session_state['booking_data'] = st.session_state['booking_data'].drop(booking_to_remove.index)
+                # Update the booking times file and the S3 bucket
+                update_booking_times(st.session_state['booking_data'])
+                # Update the booking status DataFrame
+                booking_status = get_booking_status(st.session_state['booking_data'])
+            else:
+                st.warning('No booking selected.')
+
 
         # This line of code is removed from here
 # Define a function to get the booking status
