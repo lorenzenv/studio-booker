@@ -98,7 +98,7 @@ AgGrid(booking_status.reset_index(drop=True))
 # Create a form for removing bookings
 with st.form('Remove Booking Form'):
     # Create a list of bookings in the format "Band Name - Booking Date - Booking Time"
-    bookings = st.session_state['booking_data'].apply(lambda row: f"{row['Band Name']} - {row['Booking Date'].strftime('%d.%m.%Y')} - {row['Booking Time']}", axis=1).tolist()
+    bookings = st.session_state['booking_data'].apply(lambda row: f"{row['Band Name']} - {row['Booking Date'].strftime('%d.%m.%Y')} - {row['Booking Time']}", axis=1).values.tolist()
     # Create a selectbox that lists all the bookings
     selected_booking = st.selectbox('Select a booking to remove', bookings)
     # Create a 'Remove Booking' button to submit the form
