@@ -14,8 +14,10 @@ conn = st.experimental_connection('s3', type=FilesConnection)
 def update_booking_times(booking_data):
     # Write the updated DataFrame to a CSV file in the local file system.
     booking_data.to_csv("booking_times.csv", index=False)
+    print("Data saved to local file system:", booking_data)
     # Upload the updated file to the S3 bucket.
     s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
+    print("Data saved to S3 bucket:", booking_data)
 
 # Define a function to get the booking status
 def get_booking_status(booking_data):
@@ -60,12 +62,15 @@ if 'booking_data' not in st.session_state:
     try:
         st.session_state['booking_data'] = pd.read_csv("booking_times.csv")
         st.session_state['booking_data']['Booking Date'] = pd.to_datetime(st.session_state['booking_data']['Booking Date'])
+        print("Data loaded from local file system:", st.session_state['booking_data'])
     except FileNotFoundError:
         st.session_state['booking_data'] = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
         # Write the DataFrame to a CSV file in the local file system.
         st.session_state['booking_data'].to_csv("booking_times.csv", index=False)
+        print("Data saved to local file system:", st.session_state['booking_data'])
         # Upload the file to the S3 bucket.
         s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
+        print("Data saved to S3 bucket:", st.session_state['booking_data'])
 st.session_state['booking_data']
 
 # Create a form for booking
