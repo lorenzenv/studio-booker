@@ -11,7 +11,7 @@ st.title('Band Studio Booking')
 # Create a connection object and retrieve file contents.
 # Specify input format is a csv and to cache the result for 600 seconds.
 conn = st.experimental_connection('s3', type=FilesConnection)
-booking_data = conn.read("testbucket-jrieke/myfile.csv", input_format="csv", ttl=600)
+booking_data = conn.read("studio-booker/myfile.csv", input_format="csv", ttl=600)
 
 booking_data
 
