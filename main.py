@@ -43,12 +43,18 @@ dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
 booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
 booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
 
+import gspread
+from gspread_dataframe import set_with_dataframe
+
 # Update the DataFrame with the booking information when the form is submitted
 if submit_button:
     new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
     booking_data = booking_data.append(new_booking, ignore_index=True)
     # Write the updated DataFrame back to the Google Sheet
-    booking_data.to_csv(sheets_url, index=False)
+    gc = gspread.service_account(filename='credentials.json')
+    sh = gc.open_by_url(sheets_url)
+    worksheet = sh.get_worksheet(0)
+    set_with_dataframe(worksheet, booking_data)
     booking_date_str = booking_date.strftime('%d.%m.%Y')
     booking_status.loc[booking_status['Date'] == booking_date_str, booking_time] = '🔴 - ' + band_name
 
