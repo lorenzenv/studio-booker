@@ -5,7 +5,9 @@ from st_aggrid import AgGrid
 from streamlit_calendar import calendar
 
 # Create a pandas DataFrame to store the booking information
-booking_data = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
+if 'booking_data' not in st.session_state:
+    st.session_state['booking_data'] = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
+booking_data = st.session_state['booking_data']
 
 # Create a Streamlit app
 st.title('Band Studio Booking')
@@ -25,7 +27,7 @@ with st.form('Booking Form'):
 # Create a DataFrame for the next 14 days
 dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
 booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna(False)
-booking_status['Date'] = booking_status.index.date
+booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
 
 # Update the DataFrame with the booking information when the form is submitted
 if submit_button:
