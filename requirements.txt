@@ -1,0 +1,7 @@
+streamlit
+pandas
+st_aggrid
+streamlit_calendar
+st_files_connection
+boto3
+streamlit-date-input

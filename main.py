@@ -38,7 +38,10 @@ st.session_state['booking_data']
 # Create a form for booking
 with st.form('Booking Form'):
     band_name = st.text_input('Band Name')
-    booking_date = st.date_input('Booking Date')
+    from streamlit_date_input import date_input
+    min_date = pd.Timestamp.today()
+    max_date = min_date + pd.DateOffset(days=14)
+    booking_date = date_input('Booking Date', min_date=min_date, max_date=max_date)
     booking_time = st.selectbox('Booking Time', ['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])
     submit_button = st.form_submit_button('Book Now')
 
