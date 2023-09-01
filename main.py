@@ -15,9 +15,9 @@ import boto3
 
 # Create a session using your AWS credentials.
 session = boto3.Session(
-    aws_access_key_id='YOUR_ACCESS_KEY',
-    aws_secret_access_key='YOUR_SECRET_KEY',
-    region_name='us-west-2'  # replace 'us-west-2' with your actual AWS region
+    aws_access_key_id=st.secrets["aws_access_key_id"],
+    aws_secret_access_key=st.secrets["aws_secret_access_key"],
+    region_name=st.secrets["region_name"]
 )
 
 # Create a resource object using the session and the service name (in this case, 's3').
