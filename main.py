@@ -3,28 +3,17 @@ import streamlit as st
 import pandas as pd
 from st_aggrid import AgGrid
 from streamlit_calendar import calendar
-
-# Read in data from the Google Sheet.
-# Uses st.cache to only rerun when the query changes or after 10 min.
-@st.cache(ttl=600)
-def load_data(sheets_url):
-    csv_url = sheets_url.replace("/edit#gid=", "/export?format=csv&gid=")
-    try:
-        return pd.read_csv(csv_url, on_bad_lines="skip")
-    except pd.errors.EmptyDataError:
-        # Initialize the file with a DataFrame with the appropriate columns
-        df = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
-        df.to_csv(csv_url, index=False)
-        return df
-
-# Load the booking data from the Google Sheet
-sheets_url = st.secrets["public_gsheets_url"]
-booking_data = load_data(sheets_url)
-
-booking_data
+from st_files_connection import FilesConnection
 
 # Create a Streamlit app
 st.title('Band Studio Booking')
+
+# Create a connection object and retrieve file contents.
+# Specify input format is a csv and to cache the result for 600 seconds.
+conn = st.experimental_connection('s3', type=FilesConnection)
+booking_data = conn.read("testbucket-jrieke/myfile.csv", input_format="csv", ttl=600)
+
+booking_data
 
 # Create a form for booking
 with st.form('Booking Form'):
@@ -43,18 +32,10 @@ dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
 booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
 booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
 
-import gspread
-from gspread_dataframe import set_with_dataframe
-
 # Update the DataFrame with the booking information when the form is submitted
 if submit_button:
     new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
     booking_data = booking_data.append(new_booking, ignore_index=True)
-    # Write the updated DataFrame back to the Google Sheet
-    gc = gspread.service_account(filename='credentials.json')
-    sh = gc.open_by_url(sheets_url)
-    worksheet = sh.get_worksheet(0)
-    set_with_dataframe(worksheet, booking_data)
     booking_date_str = booking_date.strftime('%d.%m.%Y')
     booking_status.loc[booking_status['Date'] == booking_date_str, booking_time] = '🔴 - ' + band_name
 
