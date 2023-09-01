@@ -65,8 +65,13 @@ with column1:
         min_date = pd.Timestamp.today()
         max_date = min_date + pd.DateOffset(days=14)
         booking_date = st.date_input('Booking Date', min_value=min_date, max_value=max_date, format="MM.DD.YYYY")
-        booking_time = st.selectbox('Booking Time', ['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])
-        submit_button = st.form_submit_button('Book Now')
+        available_times = get_available_times(booking_date)
+        if available_times:
+            booking_time = st.selectbox('Booking Time', available_times)
+            submit_button = st.form_submit_button('Book Now')
+        else:
+            st.info('No available times for this date.')
+            submit_button = st.form_submit_button('Book Now', disabled=True)
 
         # Update the DataFrame with the booking information when the form is submitted
         if submit_button:
