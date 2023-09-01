@@ -11,12 +11,28 @@ st.title('Band Studio Booking')
 # Create a connection object.
 conn = st.experimental_connection('s3', type=FilesConnection)
 
+# Import the boto3 library.
+import boto3
+
+# Create a session using your AWS credentials.
+session = boto3.Session(
+    aws_access_key_id='YOUR_ACCESS_KEY',
+    aws_secret_access_key='YOUR_SECRET_KEY',
+    region_name='YOUR_REGION'
+)
+
+# Create a resource object using the session and the service name (in this case, 's3').
+s3 = session.resource('s3')
+
 # Try to read the file. If it does not exist, create a new DataFrame and write it to the file.
 try:
     booking_data = conn.read("studio-booker/booking_times.csv", input_format="csv", ttl=600)
 except FileNotFoundError:
     booking_data = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
-    conn.write(booking_data, "studio-booker/booking_times.csv", output_format="csv")
+    # Write the DataFrame to a CSV file in the local file system.
+    booking_data.to_csv("booking_times.csv", index=False)
+    # Upload the file to the S3 bucket.
+    s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
 
 booking_data
 
