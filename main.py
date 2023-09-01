@@ -24,8 +24,9 @@ def update_booking_times(booking_data):
     s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
 
 def update_available_times(date):
-    formatted_date = convert_date_format(date)
-    st.session_state['available_times'] = get_available_times(formatted_date)
+    if date is not None:
+        formatted_date = convert_date_format(date)
+        st.session_state['available_times'] = get_available_times(formatted_date)
 
 def get_booking_status(booking_data):
     dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
@@ -81,10 +82,9 @@ if 'booking_date' not in st.session_state:
     st.session_state['booking_date'] = min_date
 if 'booking_date_input' not in st.session_state:
     st.session_state['booking_date_input'] = st.session_state['booking_date']
-st.session_state['booking_date_input'] = st.date_input('Booking Date', value=st.session_state['booking_date_input'], min_value=min_date, max_value=max_date, format="DD.MM.YYYY", on_change=update_available_times, args=[st.session_state['booking_date_input']])
-available_times = st.session_state['available_times']
-if available_times:
-    booking_time = st.selectbox('Booking Time', available_times)
+st.session_state['new_booking_date_input'] = st.date_input('Booking Date', value=st.session_state['booking_date_input'], min_value=min_date, max_value=max_date, format="DD.MM.YYYY", on_change=update_available_times, args=[st.session_state['new_booking_date_input']])
+if 'available_times' in st.session_state and st.session_state['available_times']:
+    booking_time = st.selectbox('Booking Time', st.session_state['available_times'])
 else:
     st.info('No available times for this date.')
 column1, column2 = st.columns(2)
