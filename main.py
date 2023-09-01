@@ -60,10 +60,6 @@ if 'booking_data' not in st.session_state:
         s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
 st.session_state['booking_data']
 
-column1, column2 = st.columns(2)
-def update_booking_date():
-    st.session_state['booking_date'] = st.session_state['booking_date_input']
-
 band_name = st.text_input('Band Name')
 min_date = pd.Timestamp.today()
 max_date = min_date + pd.DateOffset(days=14)
@@ -78,13 +74,14 @@ else:
 
 def form():
     with st.form('Booking Form'):
-        submit_button = st.form_submit_button('Book Now', on_click=update_booking_date)
+        submit_button = st.form_submit_button('Book Now')
 
         if submit_button:
             new_booking = {'Band Name': band_name, 'Booking Date': st.session_state['booking_date'], 'Booking Time': booking_time}
             st.session_state['booking_data'] = st.session_state['booking_data'].append(new_booking, ignore_index=True)
             update_booking_times(st.session_state['booking_data'])
 
+column1, column2 = st.columns(2)
 with column1:
     form()
 
