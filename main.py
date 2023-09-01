@@ -143,3 +143,14 @@ def get_booking_status(booking_data):
         booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
 
     return booking_status
+# Function to check the availability of booking times for a given date
+def get_available_times(date):
+    # Define the possible booking times
+    times = ['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']
+    # Get the bookings for the given date
+    bookings_on_date = st.session_state['booking_data'][st.session_state['booking_data']['Booking Date'] == date]
+    # Remove the booked times from the list of possible times
+    for index, booking in bookings_on_date.iterrows():
+        if booking['Booking Time'] in times:
+            times.remove(booking['Booking Time'])
+    return times
