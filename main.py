@@ -12,12 +12,14 @@ conn = st.experimental_connection('s3', type=FilesConnection)
 
 # Define a function to update the booking times file and the S3 bucket
 def update_booking_times(booking_data):
+    print("Data before saving to local file system:", booking_data)
     # Write the updated DataFrame to a CSV file in the local file system.
     booking_data.to_csv("booking_times.csv", index=False)
-    print("Data saved to local file system:", booking_data)
+    print("Data after saving to local file system:", booking_data)
+    print("Data before saving to S3 bucket:", booking_data)
     # Upload the updated file to the S3 bucket.
     s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
-    print("Data saved to S3 bucket:", booking_data)
+    print("Data after saving to S3 bucket:", booking_data)
 
 # Define a function to get the booking status
 def get_booking_status(booking_data):
