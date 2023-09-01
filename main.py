@@ -23,6 +23,10 @@ def update_booking_times(booking_data):
     booking_data.to_csv("booking_times.csv", index=False)
     s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
 
+def update_available_times(date):
+    formatted_date = convert_date_format(date)
+    st.session_state['available_times'] = get_available_times(formatted_date)
+
 def get_booking_status(booking_data):
     dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
     booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
