@@ -94,6 +94,7 @@ with column1:
 dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
 booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
 booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
+booking_status = booking_status[['Date', 'Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']]
 
 for index, row in st.session_state['booking_data'].iterrows():
     booking_date_str = row['Booking Date'].strftime('%d.%m.%Y')
