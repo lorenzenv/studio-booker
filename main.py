@@ -7,7 +7,6 @@ from st_files_connection import FilesConnection
 
 # Create a Streamlit app
 st.title('Band Studio Booking')
-
 # Create a connection object.
 conn = st.experimental_connection('s3', type=FilesConnection)
 
@@ -33,7 +32,6 @@ except FileNotFoundError:
     booking_data.to_csv("booking_times.csv", index=False)
     # Upload the file to the S3 bucket.
     s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
-
 booking_data
 
 # Create a form for booking
