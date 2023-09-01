@@ -32,7 +32,8 @@ booking_status['Date'] = pd.to_datetime(booking_status['Date']).dt.strftime('%d.
 if submit_button:
     new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
     booking_data = booking_data.append(new_booking, ignore_index=True)
-    booking_status.loc[booking_date, booking_time] = True
+    booking_date_str = booking_date.strftime('%d.%m.%Y')
+    booking_status.loc[booking_status['Date'] == booking_date_str, booking_time] = True
 
 # Display the booking status
 AgGrid(booking_status.reset_index(drop=True))
