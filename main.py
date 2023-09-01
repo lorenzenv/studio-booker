@@ -81,3 +81,8 @@ with st.form('Remove Booking Form'):
     selected_booking = st.selectbox('Select a booking to remove', bookings)
     # Create a 'Remove Booking' button to submit the form
     remove_button = st.form_submit_button('Remove Booking')
+
+    # Parse the selected booking to get the band name, booking date, and booking time when the 'Remove Booking' button is clicked
+    if remove_button:
+        band_name, booking_date_str, booking_time = selected_booking.split(' - ')
+        booking_date = pd.to_datetime(booking_date_str, format='%d.%m.%Y')
