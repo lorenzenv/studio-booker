@@ -38,7 +38,7 @@ st.session_state['booking_data']
 # Create a form for booking
 with st.form('Booking Form'):
     band_name = st.text_input('Band Name')
-    booking_date = st.date_input('Booking Date')
+    booking_date = st.date_input('Booking Date', format="MM.DD.YYYY")
     min_date = pd.Timestamp.today()
     max_date = min_date + pd.DateOffset(days=14)
     if booking_date < min_date or booking_date > max_date:
