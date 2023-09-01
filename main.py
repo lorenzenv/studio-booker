@@ -76,16 +76,7 @@ dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
 booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
 booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
 
-# Update the DataFrame with the booking information when the form is submitted
-if submit_button:
-    new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
-    st.session_state['booking_data'] = st.session_state['booking_data'].append(new_booking, ignore_index=True)
-    # Write the updated DataFrame to a CSV file in the local file system.
-    st.session_state['booking_data'].to_csv("booking_times.csv", index=False)
-    # Upload the updated file to the S3 bucket.
-    s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
-    booking_date_str = booking_date.strftime('%d.%m.%Y')
-    booking_status.loc[booking_status['Date'] == booking_date_str, booking_time] = '🔴 - ' + band_name
+# This block of code is removed as it is a duplicate of the code inside the 'Booking Form'
 
 # Iterate over the booking_data DataFrame and update the booking_status DataFrame with the booking information
 for index, row in st.session_state['booking_data'].iterrows():
@@ -118,8 +109,7 @@ with st.form('Remove Booking Form'):
         # Update the booking status DataFrame
         booking_status = get_booking_status(st.session_state['booking_data'])
 
-        # Display the updated booking status
-        AgGrid(booking_status.reset_index(drop=True))
+        # This line of code is removed from here
 # Define a function to get the booking status
 def get_booking_status(booking_data):
     # Create a DataFrame for the next 14 days
@@ -133,6 +123,9 @@ def get_booking_status(booking_data):
         booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
 
     return booking_status
+
+# Display the booking status
+AgGrid(booking_status.reset_index(drop=True))
 # Define a function to get the booking status
 def get_booking_status(booking_data):
     # Create a DataFrame for the next 14 days
