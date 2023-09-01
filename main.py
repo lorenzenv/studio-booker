@@ -9,7 +9,13 @@ from streamlit_calendar import calendar
 @st.cache(ttl=600)
 def load_data(sheets_url):
     csv_url = sheets_url.replace("/edit#gid=", "/export?format=csv&gid=")
-    return pd.read_csv(csv_url, on_bad_lines="skip")
+    try:
+        return pd.read_csv(csv_url, on_bad_lines="skip")
+    except pd.errors.EmptyDataError:
+        # Initialize the file with a DataFrame with the appropriate columns
+        df = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
+        df.to_csv(csv_url, index=False)
+        return df
 
 # Load the booking data from the Google Sheet
 sheets_url = st.secrets["public_gsheets_url"]
