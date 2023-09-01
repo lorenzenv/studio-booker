@@ -83,8 +83,6 @@ for index, row in st.session_state['booking_data'].iterrows():
     booking_date_str = row['Booking Date'].strftime('%d.%m.%Y')
     booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
 
-# Display the booking status
-AgGrid(booking_status.reset_index(drop=True), key='booking_status')
 
 # Create a form for removing bookings
 with st.form('Remove Booking Form'):
