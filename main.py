@@ -105,10 +105,13 @@ with st.form('Remove Booking Form'):
 
     # Update the booking data, booking times file, and S3 bucket when the 'Remove Booking' button is clicked
     if remove_button:
-        # Get the index of the selected booking
-        index = bookings.index(selected_booking)
+        # Split the selected booking into band name, booking date, and booking time
+        band_name, booking_date_str, booking_time = selected_booking.split(' - ')
+        booking_date = pd.to_datetime(booking_date_str, format='%d.%m.%Y')
+        # Find the booking in the booking_data DataFrame that matches the selected booking
+        booking_to_remove = st.session_state['booking_data'][(st.session_state['booking_data']['Band Name'] == band_name) & (st.session_state['booking_data']['Booking Date'] == booking_date) & (st.session_state['booking_data']['Booking Time'] == booking_time)]
         # Remove the booking from the booking data DataFrame
-        st.session_state['booking_data'] = st.session_state['booking_data'].drop(index)
+        st.session_state['booking_data'] = st.session_state['booking_data'].drop(booking_to_remove.index)
         # Update the booking times file and the S3 bucket
         update_booking_times(st.session_state['booking_data'])
         # Update the booking status DataFrame
