@@ -25,14 +25,15 @@ s3 = session.resource('s3')
 
 # Try to read the file. If it does not exist, create a new DataFrame and write it to the file.
 try:
-    booking_data = conn.read("studio-booker/booking_times.csv", input_format="csv", ttl=600)
+    if 'booking_data' not in st.session_state:
+        st.session_state['booking_data'] = conn.read("studio-booker/booking_times.csv", input_format="csv", ttl=600)
 except FileNotFoundError:
-    booking_data = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
+    st.session_state['booking_data'] = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
     # Write the DataFrame to a CSV file in the local file system.
-    booking_data.to_csv("booking_times.csv", index=False)
+    st.session_state['booking_data'].to_csv("booking_times.csv", index=False)
     # Upload the file to the S3 bucket.
     s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
-booking_data
+st.session_state['booking_data']
 
 # Create a form for booking
 with st.form('Booking Form'):
@@ -54,7 +55,7 @@ booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
 # Update the DataFrame with the booking information when the form is submitted
 if submit_button:
     new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
-    booking_data = booking_data.append(new_booking, ignore_index=True)
+    st.session_state['booking_data'] = st.session_state['booking_data'].append(new_booking, ignore_index=True)
     # Write the updated DataFrame to a CSV file in the local file system.
     booking_data.to_csv("booking_times.csv", index=False)
     # Upload the updated file to the S3 bucket.
