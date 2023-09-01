@@ -8,10 +8,17 @@ from st_files_connection import FilesConnection
 # Create a Streamlit app
 st.title('Band Studio Booking')
 
-# Create a connection object and retrieve file contents.
-# Specify input format is a csv and to cache the result for 600 seconds.
+# Create a connection object.
 conn = st.experimental_connection('s3', type=FilesConnection)
-booking_data = conn.read("studio-booker/myfile.csv", input_format="csv", ttl=600)
+
+# Check if the file exists.
+if conn.exists("studio-booker/booking_times.csv"):
+    # If the file exists, read it.
+    booking_data = conn.read("studio-booker/booking_times.csv", input_format="csv", ttl=600)
+else:
+    # If the file doesn't exist, create a new DataFrame and write it to the file.
+    booking_data = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
+    conn.write(booking_data, "studio-booker/booking_times.csv", output_format="csv")
 
 booking_data
 
