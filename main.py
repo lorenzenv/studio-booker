@@ -68,10 +68,12 @@ def form():
             available_times = get_available_times(convert_date_format(booking_date))
         else:
             available_times = get_available_times(convert_date_format(st.session_state['booking_date']))
+        st.write(booking_date)
         if available_times:
             booking_time = st.selectbox('Booking Time', available_times)
             submit_button = st.form_submit_button('Book Now')
         else:
+            st.write(available_times)
             st.info('No available times for this date.')
             submit_button = st.form_submit_button('Book Now', disabled=True)
 
