@@ -63,9 +63,11 @@ def form():
         min_date = pd.Timestamp.today()
         max_date = min_date + pd.DateOffset(days=14)
         booking_date = st.date_input('Booking Date', min_value=min_date, max_value=max_date, format="DD.MM.YYYY")
-        if booking_date:
-            get_available_times(convert_date_format(booking_date))
-        available_times = get_available_times(convert_date_format(booking_date))
+        if 'booking_date' not in st.session_state or st.session_state['booking_date'] != booking_date:
+            st.session_state['booking_date'] = booking_date
+            available_times = get_available_times(convert_date_format(booking_date))
+        else:
+            available_times = get_available_times(convert_date_format(st.session_state['booking_date']))
         if available_times:
             booking_time = st.selectbox('Booking Time', available_times)
             submit_button = st.form_submit_button('Book Now')
