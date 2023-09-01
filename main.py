@@ -60,6 +60,9 @@ if 'booking_data' not in st.session_state:
         s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
 st.session_state['booking_data']
 
+if 'available_times' not in st.session_state:
+    st.session_state['available_times'] = []
+
 
 
 def form():
