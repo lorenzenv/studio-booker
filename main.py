@@ -112,3 +112,6 @@ with column2:
                 st.warning('No booking selected.')
 
 AgGrid(booking_status.reset_index(drop=True))
+def update_available_times(date):
+    formatted_date = convert_date_format(date)
+    st.session_state['available_times'] = get_available_times(formatted_date)
