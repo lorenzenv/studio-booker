@@ -9,11 +9,13 @@ from streamlit_calendar import calendar
 @st.cache(ttl=600)
 def load_data(sheets_url):
     csv_url = sheets_url.replace("/edit#gid=", "/export?format=csv&gid=")
-    return pd.read_csv(csv_url)
+    return pd.read_csv(csv_url, on_bad_lines="skip")
 
 # Load the booking data from the Google Sheet
 sheets_url = st.secrets["public_gsheets_url"]
 booking_data = load_data(sheets_url)
+
+booking_data
 
 # Create a Streamlit app
 st.title('Band Studio Booking')
