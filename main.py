@@ -10,6 +10,13 @@ st.title('Band Studio Booking')
 # Create a connection object.
 conn = st.experimental_connection('s3', type=FilesConnection)
 
+# Define a function to update the booking times file and the S3 bucket
+def update_booking_times(booking_data):
+    # Write the updated DataFrame to a CSV file in the local file system.
+    booking_data.to_csv("booking_times.csv", index=False)
+    # Upload the updated file to the S3 bucket.
+    s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
+
 # Import the boto3 library.
 import boto3
 
