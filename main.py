@@ -57,27 +57,28 @@ if 'booking_data' not in st.session_state:
 st.session_state['booking_data']
 
 column1, column2 = st.columns(2)
+def update_booking_date():
+    st.session_state['booking_date'] = st.session_state['booking_date_input']
+
 def form():
     with st.form('Booking Form'):
         band_name = st.text_input('Band Name')
         min_date = pd.Timestamp.today()
         max_date = min_date + pd.DateOffset(days=14)
-        booking_date = st.date_input('Booking Date', min_value=min_date, max_value=max_date, format="DD.MM.YYYY")
-        if 'booking_date' not in st.session_state or st.session_state['booking_date'] != booking_date:
-            st.session_state['booking_date'] = booking_date
-            st.session_state['available_times'] = get_available_times(convert_date_format(booking_date))
+        if 'booking_date' not in st.session_state:
+            st.session_state['booking_date'] = min_date
+        st.session_state['booking_date_input'] = st.date_input('Booking Date', value=st.session_state['booking_date'], min_value=min_date, max_value=max_date, format="DD.MM.YYYY")
+        st.session_state['available_times'] = get_available_times(convert_date_format(st.session_state['booking_date_input']))
         available_times = st.session_state['available_times']
-        st.write(booking_date)
         if available_times:
             booking_time = st.selectbox('Booking Time', available_times)
-            submit_button = st.form_submit_button('Book Now')
+            submit_button = st.form_submit_button('Book Now', on_click=update_booking_date)
         else:
-            st.write(available_times)
             st.info('No available times for this date.')
-            submit_button = st.form_submit_button('Book Now', disabled=True)
+            submit_button = st.form_submit_button('Book Now', disabled=True, on_click=update_booking_date)
 
         if submit_button:
-            new_booking = {'Band Name': band_name, 'Booking Date': booking_date, 'Booking Time': booking_time}
+            new_booking = {'Band Name': band_name, 'Booking Date': st.session_state['booking_date'], 'Booking Time': booking_time}
             st.session_state['booking_data'] = st.session_state['booking_data'].append(new_booking, ignore_index=True)
             update_booking_times(st.session_state['booking_data'])
 
