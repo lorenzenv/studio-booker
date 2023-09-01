@@ -25,7 +25,7 @@ with st.form('Booking Form'):
 # Create a DataFrame for the next 14 days
 dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
 booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna(False)
-booking_status['Date'] = booking_status.index
+booking_status['Date'] = booking_status.index.date
 
 # Update the DataFrame with the booking information when the form is submitted
 if submit_button:
