@@ -60,17 +60,7 @@ if 'booking_data' not in st.session_state:
         s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
 st.session_state['booking_data']
 
-band_name = st.text_input('Band Name')
-min_date = pd.Timestamp.today()
-max_date = min_date + pd.DateOffset(days=14)
-if 'booking_date' not in st.session_state:
-    st.session_state['booking_date'] = min_date
-st.session_state['booking_date_input'] = st.date_input('Booking Date', value=st.session_state['booking_date'], min_value=min_date, max_value=max_date, format="DD.MM.YYYY", on_change=update_available_times, args=[st.session_state['booking_date_input']])
-available_times = st.session_state['available_times']
-if available_times:
-    booking_time = st.selectbox('Booking Time', available_times)
-else:
-    st.info('No available times for this date.')
+
 
 def form():
     with st.form('Booking Form'):
@@ -83,6 +73,17 @@ def form():
 
 column1, column2 = st.columns(2)
 with column1:
+    band_name = st.text_input('Band Name')
+    min_date = pd.Timestamp.today()
+    max_date = min_date + pd.DateOffset(days=14)
+    if 'booking_date' not in st.session_state:
+        st.session_state['booking_date'] = min_date
+    st.session_state['booking_date_input'] = st.date_input('Booking Date', value=st.session_state['booking_date'], min_value=min_date, max_value=max_date, format="DD.MM.YYYY", on_change=update_available_times, args=[st.session_state['booking_date_input']])
+    available_times = st.session_state['available_times']
+    if available_times:
+        booking_time = st.selectbox('Booking Time', available_times)
+    else:
+        st.info('No available times for this date.')
     form()
 
 dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
