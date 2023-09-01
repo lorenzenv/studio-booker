@@ -26,6 +26,7 @@ s3 = session.resource('s3')
 # Try to read the file. If it does not exist, create a new DataFrame and write it to the file.
 try:
     st.session_state['booking_data'] = pd.read_csv("booking_times.csv")
+    st.session_state['booking_data']['Booking Date'] = pd.to_datetime(st.session_state['booking_data']['Booking Date'])
 except FileNotFoundError:
     st.session_state['booking_data'] = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
     # Write the DataFrame to a CSV file in the local file system.
