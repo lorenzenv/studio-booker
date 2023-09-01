@@ -78,7 +78,9 @@ with column1:
     max_date = min_date + pd.DateOffset(days=14)
     if 'booking_date' not in st.session_state:
         st.session_state['booking_date'] = min_date
-    st.session_state['booking_date_input'] = st.date_input('Booking Date', value=st.session_state['booking_date'], min_value=min_date, max_value=max_date, format="DD.MM.YYYY", on_change=update_available_times, args=[st.session_state['booking_date_input']])
+    if 'booking_date_input' not in st.session_state:
+        st.session_state['booking_date_input'] = st.session_state['booking_date']
+    st.session_state['booking_date_input'] = st.date_input('Booking Date', value=st.session_state['booking_date_input'], min_value=min_date, max_value=max_date, format="DD.MM.YYYY", on_change=update_available_times, args=[st.session_state['booking_date_input']])
     available_times = st.session_state['available_times']
     if available_times:
         booking_time = st.selectbox('Booking Time', available_times)
