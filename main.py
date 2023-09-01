@@ -56,16 +56,16 @@ session = boto3.Session(
 s3 = session.resource('s3')
 
 # Try to read the file. If it does not exist, create a new DataFrame and write it to the file.
-try:
-    if 'booking_data' not in st.session_state:
+if 'booking_data' not in st.session_state:
+    try:
         st.session_state['booking_data'] = pd.read_csv("booking_times.csv")
         st.session_state['booking_data']['Booking Date'] = pd.to_datetime(st.session_state['booking_data']['Booking Date'])
-except FileNotFoundError:
-    st.session_state['booking_data'] = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
-    # Write the DataFrame to a CSV file in the local file system.
-    st.session_state['booking_data'].to_csv("booking_times.csv", index=False)
-    # Upload the file to the S3 bucket.
-    s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
+    except FileNotFoundError:
+        st.session_state['booking_data'] = pd.DataFrame(columns=['Band Name', 'Booking Date', 'Booking Time'])
+        # Write the DataFrame to a CSV file in the local file system.
+        st.session_state['booking_data'].to_csv("booking_times.csv", index=False)
+        # Upload the file to the S3 bucket.
+        s3.Bucket('studio-booker').upload_file("booking_times.csv", "booking_times.csv")
 st.session_state['booking_data']
 
 # Create a form for booking
