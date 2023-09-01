@@ -102,3 +102,16 @@ with st.form('Remove Booking Form'):
 
         # Display the updated booking status
         AgGrid(booking_status.reset_index(drop=True))
+# Define a function to get the booking status
+def get_booking_status(booking_data):
+    # Create a DataFrame for the next 14 days
+    dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
+    booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
+    booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
+
+    # Iterate over the booking_data DataFrame and update the booking_status DataFrame with the booking information
+    for index, row in booking_data.iterrows():
+        booking_date_str = row['Booking Date'].strftime('%d.%m.%Y')
+        booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
+
+    return booking_status
