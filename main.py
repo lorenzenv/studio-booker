@@ -49,7 +49,7 @@ def convert_date_format(input_date):
 def update_booking_times(band_name, datum, selected_time):
     booking_data = pd.DataFrame({'Band Name': [band_name], 'Booking Date': [datum], 'Booking Time': [selected_time]})
     df = get_df()
-    df = df.append(booking_data)
+    df = pd.concat([df, booking_data], ignore_index=True)
     csv_buffer = StringIO()
     df.to_csv(csv_buffer, index=False)
 
