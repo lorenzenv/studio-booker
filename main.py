@@ -1,14 +1,11 @@
 
 import streamlit as st
 import pandas as pd
-from st_aggrid import AgGrid
-from streamlit_calendar import calendar
 from st_files_connection import FilesConnection
 import boto3
 from io import StringIO
-from datetime import datetime
 
-st.set_page_config(page_title="Liebermann Studio Zeit", layout="wide", page_icon=":guitar:")
+st.set_page_config(page_title="Liebermann Studio Zeit", layout="wide", page_icon=":guitar:", )
 
 st.title(':guitar: Liebermann Studio Zeit')
 
