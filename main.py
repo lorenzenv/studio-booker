@@ -60,7 +60,7 @@ def get_booking_status(df):
     dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
     booking_status = pd.DataFrame(index=dates, columns=['Wochentag', 'Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
     booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
-    booking_status['Wochentag'] = dates.day_name(locale='de_DE.UTF-8')
+    booking_status['Wochentag'] = dates.day_name()
     for index, row in df.iterrows():
         booking_date_str = row['Booking Date']
         booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
