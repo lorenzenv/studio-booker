@@ -66,7 +66,7 @@ def get_booking_status(df):
         booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
 
     booking_status = booking_status.reindex(columns=['Date', 'Wochentag', 'Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])
-    booking_status.loc[booking_status['Wochentag'] == "Donnerstag", 'Abends (ab 19 Uhr)'] = '🔴 - Raphi'
+    booking_status.loc[booking_status['Wochentag'] == "Thursday", 'Abends (ab 19 Uhr)'] = '🔴 - Raphi'
     return booking_status
 
 def get_all_bookings(df):
