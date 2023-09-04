@@ -58,13 +58,15 @@ def update_booking_times(band_name, datum, selected_time):
 
 def get_booking_status(df):
     dates = pd.date_range(start=pd.Timestamp.today(), periods=14)
-    booking_status = pd.DataFrame(index=dates, columns=['Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
+    booking_status = pd.DataFrame(index=dates, columns=['Wochentag', 'Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)']).fillna('🟢')
     booking_status['Date'] = booking_status.index.strftime('%d.%m.%Y')
+    booking_status['Wochentag'] = dates.day_name(locale='de_DE.UTF-8')
     for index, row in df.iterrows():
         booking_date_str = row['Booking Date']
         booking_status.loc[booking_status['Date'] == booking_date_str, row['Booking Time']] = '🔴 - ' + row['Band Name']
 
-    booking_status = booking_status.reindex(columns=['Date', 'Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])  # Replace these with the actual column names
+    booking_status = booking_status.reindex(columns=['Date', 'Wochentag', 'Tagsüber (bis 19 Uhr)', 'Abends (ab 19 Uhr)'])
+    booking_status.loc[booking_status['Wochentag'] == "Donnerstag", 'Abends (ab 19 Uhr)'] = '🔴 - Raphi'
     return booking_status
 
 def get_all_bookings(df):
